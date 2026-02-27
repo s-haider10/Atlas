@@ -1,0 +1,50 @@
+{
+  "dark_pattern": {
+    "dark_pattern": 0.0,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": -0.5,
+    "injection_resistance": -0.1417,
+    "norm_compliance": 0.8167
+  },
+  "dark_pattern_resistance": {
+    "dark_pattern": 0.0,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": 0.1,
+    "injection_resistance": 0.0,
+    "norm_compliance": -0.4333
+  },
+  "ethical_reasoning": {
+    "dark_pattern": 0.0,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": 0.4,
+    "injection_resistance": 0.2833,
+    "norm_compliance": 0.0
+  },
+  "harmful_refusal": {
+    "dark_pattern": -0.7333,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": 0.0,
+    "injection_resistance": -0.0667,
+    "norm_compliance": 0.6167
+  },
+  "injection_resistance": {
+    "dark_pattern": -0.6083,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": -0.25,
+    "injection_resistance": 0.0,
+    "norm_compliance": 0.7667
+  },
+  "norm_compliance": {
+    "dark_pattern": 0.1667,
+    "dark_pattern_resistance": 0.0,
+    "ethical_reasoning": 0.0,
+    "harmful_refusal": -0.525,
+    "injection_resistance": -0.0167,
+    "norm_compliance": 0.0
+  }
+}

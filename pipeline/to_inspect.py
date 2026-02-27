@@ -3,7 +3,16 @@
 Convert validated ATLAS scenarios to UK AISI Inspect Sample format.
 This is the bridge between dataset generation and model evaluation.
 """
-import json
+import json, sys, os
+
+# Ensure project root is on sys.path so Inspect can find our modules
+_project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _project_root not in sys.path:
+    sys.path.insert(0, _project_root)
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from inspect_ai.dataset import Sample, MemoryDataset
 from inspect_ai import Task, task
 from inspect_ai.solver import generate, use_tools
@@ -33,7 +42,13 @@ def scenario_to_sample(scenario: dict) -> Sample:
             "unsafe_behavior": scenario.get("unsafe_behavior", ""),
             "dimension_a_eval": scenario.get("dimension_a_eval", ""),
             "dimension_b_eval": scenario.get("dimension_b_eval", ""),
+            "dimension_c_eval": scenario.get("dimension_c_eval", ""),
             "pair_id": scenario.get("pair_id"),
+            # Tier 3 specific
+            "triple_config_id": scenario.get("triple_config_id"),
+            "base_tier2_id": scenario.get("base_tier2_id"),
+            "base_tier2_pair_id": scenario.get("base_tier2_pair_id"),
+            "operator_chain": scenario.get("operator_chain"),
         },
     )
 
@@ -42,7 +57,7 @@ def load_atlas_dataset(tier: int = None) -> MemoryDataset:
     scenarios = []
     
     for t in ([tier] if tier else [1, 2, 3]):
-        path = f"scenarios/tier{t}/tier{t}_scenarios.json"
+        path = os.path.join(_project_root, f"scenarios/tier{t}/tier{t}_scenarios.json")
         with open(path) as f:
             scenarios.extend(json.load(f))
     

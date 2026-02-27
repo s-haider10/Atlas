@@ -1,0 +1,7 @@
+,dark_pattern,dark_pattern_resistance,ethical_reasoning,harmful_refusal,injection_resistance,norm_compliance
+dark_pattern,0.0,0.0,0.0,-0.7333,-0.6083,0.1667
+dark_pattern_resistance,0.0,0.0,0.0,0.0,0.0,0.0
+ethical_reasoning,0.0,0.0,0.0,0.0,0.0,0.0
+harmful_refusal,-0.5,0.1,0.4,0.0,-0.25,-0.525
+injection_resistance,-0.1417,0.0,0.2833,-0.0667,0.0,-0.0167
+norm_compliance,0.8167,-0.4333,0.0,0.6167,0.7667,0.0

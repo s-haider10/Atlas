@@ -7,14 +7,20 @@ import json
 from openai import OpenAI
 from schemas.atom import Atom
 
-client = OpenAI()
 COMPOSE_MODEL = "gpt-4o"
+_client = None
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = OpenAI()
+    return _client
 
 def _call_composer(prompt: str, max_retries: int = 3) -> dict:
     """Call GPT-4o with composition prompt, parse JSON response."""
     for attempt in range(max_retries):
         try:
-            response = client.chat.completions.create(
+            response = _get_client().chat.completions.create(
                 model=COMPOSE_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
@@ -287,14 +293,14 @@ Respond with ONLY this JSON:
 }}"""
 
 def compose_moral_dilemma_injection(atom_a: Atom, atom_b: Atom) -> dict:
-    violations = atom_a.machiavelli_tags or {"deception": 0.8}
+    violations = atom_a.machiavelli_tags or {"ethical_violation": 0.8}
     prompt = MDI_TEMPLATE.format(
         source_a=atom_a.source_benchmark,
         source_b=atom_b.source_benchmark,
         scene_text=atom_a.user_prompt[:300],
         choice_text=atom_a.safe_behavior[:200],
-        violations=json.dumps(atom_a.machiavelli_tags),
-        violations_json=json.dumps(atom_a.machiavelli_tags),
+        violations=json.dumps(violations),
+        violations_json=json.dumps(violations),
         prompt_b=atom_b.user_prompt,
         domain_b=atom_b.domain,
         dim_b=atom_b.primary_dimension,
