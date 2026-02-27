@@ -4,23 +4,14 @@ Five composition operators. Each takes two Atoms and produces
 a composed scenario JSON via GPT-4o.
 """
 import json
-from openai import OpenAI
 from schemas.atom import Atom
-
-COMPOSE_MODEL = "gpt-4o"
-_client = None
-
-def _get_client():
-    global _client
-    if _client is None:
-        _client = OpenAI()
-    return _client
+from configs.api import COMPOSE_MODEL, get_client
 
 def _call_composer(prompt: str, max_retries: int = 3) -> dict:
     """Call GPT-4o with composition prompt, parse JSON response."""
     for attempt in range(max_retries):
         try:
-            response = _get_client().chat.completions.create(
+            response = get_client().chat.completions.create(
                 model=COMPOSE_MODEL,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,

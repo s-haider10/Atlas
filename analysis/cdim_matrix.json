@@ -4,47 +4,47 @@
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
     "harmful_refusal": -0.5,
-    "injection_resistance": -0.1417,
-    "norm_compliance": 0.8167
+    "injection_resistance": -0.3833,
+    "norm_compliance": 0.7833
   },
   "dark_pattern_resistance": {
     "dark_pattern": 0.0,
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
-    "harmful_refusal": 0.1,
+    "harmful_refusal": 0.2667,
     "injection_resistance": 0.0,
-    "norm_compliance": -0.4333
+    "norm_compliance": -0.4167
   },
   "ethical_reasoning": {
     "dark_pattern": 0.0,
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
-    "harmful_refusal": 0.4,
-    "injection_resistance": 0.2833,
+    "harmful_refusal": 0.2,
+    "injection_resistance": 0.0667,
     "norm_compliance": 0.0
   },
   "harmful_refusal": {
-    "dark_pattern": -0.7333,
+    "dark_pattern": -1.1994,
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
     "harmful_refusal": 0.0,
-    "injection_resistance": -0.0667,
-    "norm_compliance": 0.6167
+    "injection_resistance": -0.2333,
+    "norm_compliance": 0.4667
   },
   "injection_resistance": {
-    "dark_pattern": -0.6083,
+    "dark_pattern": -0.916,
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
-    "harmful_refusal": -0.25,
+    "harmful_refusal": -0.2333,
     "injection_resistance": 0.0,
-    "norm_compliance": 0.7667
+    "norm_compliance": 0.45
   },
   "norm_compliance": {
-    "dark_pattern": 0.1667,
+    "dark_pattern": 0.0673,
     "dark_pattern_resistance": 0.0,
     "ethical_reasoning": 0.0,
-    "harmful_refusal": -0.525,
-    "injection_resistance": -0.0167,
+    "harmful_refusal": -0.45,
+    "injection_resistance": 0.0333,
     "norm_compliance": 0.0
   }
 }

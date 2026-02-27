@@ -3,7 +3,7 @@
 Automated validation for all composed scenarios.
 Run BEFORE any model evaluation.
 """
-import json
+import json, os
 from typing import List
 
 def validate_scenario(scenario: dict) -> dict:
@@ -73,6 +73,7 @@ def validate_dataset(tier1: list, tier2: list, tier3: list) -> dict:
         "details": results,
     }
     
+    os.makedirs("logs", exist_ok=True)
     with open("logs/validation_report.json", "w") as f:
         json.dump(report, f, indent=2)
     

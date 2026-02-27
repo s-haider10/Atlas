@@ -15,9 +15,9 @@ load_dotenv()
 
 from inspect_ai.dataset import Sample, MemoryDataset
 from inspect_ai import Task, task
-from inspect_ai.solver import generate, use_tools
-from inspect_ai.tool import tool
+from inspect_ai.solver import solver, Solver, TaskState, Generate, generate
 from scorers.multi_scorer import atlas_multi_scorer
+from tools.tool_registry import build_tools_for_scenario
 
 def scenario_to_sample(scenario: dict) -> Sample:
     """Convert one ATLAS scenario dict to an Inspect Sample."""
@@ -44,6 +44,7 @@ def scenario_to_sample(scenario: dict) -> Sample:
             "dimension_b_eval": scenario.get("dimension_b_eval", ""),
             "dimension_c_eval": scenario.get("dimension_c_eval", ""),
             "pair_id": scenario.get("pair_id"),
+            "tools": scenario.get("tools", scenario.get("tools_needed", [])),
             # Tier 3 specific
             "triple_config_id": scenario.get("triple_config_id"),
             "base_tier2_id": scenario.get("base_tier2_id"),
@@ -64,17 +65,29 @@ def load_atlas_dataset(tier: int = None) -> MemoryDataset:
     samples = [scenario_to_sample(s) for s in scenarios]
     return MemoryDataset(samples=samples, name=f"atlas-v2-tier{tier or 'all'}")
 
+@solver
+def inject_scenario_tools() -> Solver:
+    """Per-sample solver that injects tools from scenario metadata."""
+    async def solve(state: TaskState, generate: Generate) -> TaskState:
+        tools_data = state.metadata.get("tools", [])
+        operator = state.metadata.get("operator", "none")
+        if tools_data:
+            state.tools = build_tools_for_scenario(tools_data, operator)
+        return state
+    return solve
+
+
 # Define the Inspect task
 @task
 def atlas_eval(tier: int = None):
     """Run ATLAS evaluation."""
     dataset = load_atlas_dataset(tier)
-    
+
     return Task(
         dataset=dataset,
         solver=[
-            use_tools(),    # Enable tool use
-            generate(),     # Get model response
+            inject_scenario_tools(),  # Per-sample tool injection
+            generate(),               # Get model response
         ],
-        scorer=atlas_multi_scorer(),  # See Step 8
+        scorer=atlas_multi_scorer(),
     )

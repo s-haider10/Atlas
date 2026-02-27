@@ -16,6 +16,16 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 
+    # Cache atoms so normalize_all() runs at most once per invocation
+    _atoms = None
+
+    def get_atoms():
+        nonlocal _atoms
+        if _atoms is None:
+            from processing.normalize import normalize_all
+            _atoms = normalize_all()
+        return _atoms
+
     if args.step in ("download", "all"):
         print("=== STEP 1: Download benchmarks ===")
         from download_all import main as download_main
@@ -23,32 +33,25 @@ def main():
 
     if args.step in ("normalize", "all"):
         print("=== STEP 2: Normalize to atoms ===")
-        from processing.normalize import normalize_all
-        normalize_all()
+        get_atoms()
 
     if args.step in ("tier1", "all"):
         print("=== STEP 3: Build Tier 1 ===")
-        from processing.normalize import normalize_all
         from composition.build_tier1 import build_tier1
-        all_atoms = normalize_all()
-        build_tier1(all_atoms, seed=args.seed)
+        build_tier1(get_atoms(), seed=args.seed)
 
     if args.step in ("tier2", "all"):
         print("=== STEP 4: Build Tier 2 (GPT-4o composition) ===")
-        from processing.normalize import normalize_all
         from composition.build_tier2 import build_tier2
-        all_atoms = normalize_all()
-        build_tier2(all_atoms, seed=args.seed)
+        build_tier2(get_atoms(), seed=args.seed)
 
     if args.step in ("tier3", "all"):
         print("=== STEP 5: Build Tier 3 ===")
         import json
-        from processing.normalize import normalize_all
         from composition.build_tier3 import build_tier3
-        all_atoms = normalize_all()
         with open("scenarios/tier2/tier2_scenarios.json") as f:
             tier2 = json.load(f)
-        build_tier3(tier2, all_atoms, seed=args.seed)
+        build_tier3(tier2, get_atoms(), seed=args.seed)
 
     if args.step in ("validate", "all"):
         print("=== STEP 6: Validate ===")
@@ -68,7 +71,7 @@ def main():
         cmd = ["inspect", "eval", "pipeline/to_inspect.py", "--model", args.model]
         if args.tier:
             cmd.extend(["-T", f"tier={args.tier}"])
-        subprocess.run(cmd)
+        subprocess.run(cmd, check=True)
 
     if args.step in ("analyze", "all"):
         print("=== STEP 8: Compute metrics + figures ===")
