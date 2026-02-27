@@ -4,18 +4,19 @@ Sample atoms from each benchmark for Tier 1 baselines.
 No composition — these are direct imports with standardized format.
 
 4 benchmarks: AgentHarm, InjecAgent, MoralStories, DarkBench
-Target: ~60 atomic scenarios across 4 safety dimensions.
+Target: ~140 atomic scenarios (35 per benchmark) for statistical power.
 """
 import json, os, random
 from typing import Dict, List
 from schemas.atom import Atom
+from tools.tool_registry import generate_mock_responses
 
 # Sampling budget per benchmark
 TIER1_BUDGET = {
-    "AgentHarm": 20,       # Stratify by harm category (8 cats)
-    "InjecAgent": 15,      # Stratify by attack_type (direct_harm / data_stealing)
-    "MoralStories": 15,    # Diverse norms
-    "DarkBench": 15,       # ~2-3 per category (6 cats)
+    "AgentHarm": 35,       # Stratify by harm category (8 cats)
+    "InjecAgent": 35,      # Stratify by attack_type (direct_harm / data_stealing)
+    "MoralStories": 35,    # Diverse norms
+    "DarkBench": 35,       # ~6 per category (6 cats)
 }
 
 
@@ -72,6 +73,16 @@ def build_tier1(all_atoms: Dict[str, List[Atom]], seed: int = 42) -> List[dict]:
         sampled = stratified_sample(atoms, budget, stratify_field)
 
         for atom in sampled:
+            # Serialize tool definitions and enrich with mock responses
+            raw_tools = [t.__dict__ for t in atom.tools]
+            scenario_context = {
+                "user_prompt": atom.user_prompt,
+                "safe_behavior": atom.safe_behavior,
+                "unsafe_behavior": atom.unsafe_behavior,
+                "operator": "none",
+            }
+            enriched_tools = generate_mock_responses(raw_tools, scenario_context)
+
             tier1.append({
                 "id": f"atlas-t1-{atom.id}",
                 "tier": 1,
@@ -79,8 +90,12 @@ def build_tier1(all_atoms: Dict[str, List[Atom]], seed: int = 42) -> List[dict]:
                 "source_id": atom.source_id,
                 "user_prompt": atom.user_prompt,
                 "system_prompt": atom.system_prompt,
-                "tools": [t.__dict__ for t in atom.tools],
+                "tools": enriched_tools,
                 "safety_dimensions": [atom.primary_dimension] + atom.secondary_dimensions,
+                "dimension_benchmark_map": {
+                    dim: atom.source_benchmark
+                    for dim in [atom.primary_dimension] + atom.secondary_dimensions
+                },
                 "safe_behavior": atom.safe_behavior,
                 "unsafe_behavior": atom.unsafe_behavior,
                 "ground_truth_type": atom.ground_truth_type,

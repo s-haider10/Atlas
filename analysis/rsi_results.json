@@ -1,14 +1,122 @@
 {
-  "1": -0.5356,
-  "2": -0.4765,
-  "3": -0.2765,
-  "4": 0.0,
-  "5": 0.0069,
-  "6": 0.1167,
-  "7": -0.0098,
-  "8": -0.55,
-  "9": -0.5265,
-  "10": -0.5167,
-  "11": 0.3167,
-  "12": -0.4
+  "1": {
+    "rsi": -0.3226,
+    "n_tier1": 180,
+    "n_tier2": 43,
+    "refusal_rate_tier1": 0.4389,
+    "refusal_rate_tier2": 0.1163,
+    "p_value": 0.000179,
+    "significant": true,
+    "test": "chi2"
+  },
+  "2": {
+    "rsi": -0.1444,
+    "n_tier1": 180,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.4444,
+    "refusal_rate_tier2": 0.3,
+    "p_value": 0.134118,
+    "significant": false,
+    "test": "chi2"
+  },
+  "3": {
+    "rsi": -0.1111,
+    "n_tier1": 180,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.6611,
+    "refusal_rate_tier2": 0.55,
+    "p_value": 0.253121,
+    "significant": false,
+    "test": "chi2"
+  },
+  "4": {
+    "rsi": -0.0233,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.2733,
+    "refusal_rate_tier2": 0.25,
+    "p_value": 0.924228,
+    "significant": false,
+    "test": "chi2"
+  },
+  "5": {
+    "rsi": 0.1611,
+    "n_tier1": 180,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.4389,
+    "refusal_rate_tier2": 0.6,
+    "p_value": 0.094535,
+    "significant": false,
+    "test": "chi2"
+  },
+  "6": {
+    "rsi": 0.1583,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.2667,
+    "refusal_rate_tier2": 0.425,
+    "p_value": 0.08056,
+    "significant": false,
+    "test": "chi2"
+  },
+  "7": {
+    "rsi": 0.3556,
+    "n_tier1": 180,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.4444,
+    "refusal_rate_tier2": 0.8,
+    "p_value": 9.9e-05,
+    "significant": true,
+    "test": "chi2"
+  },
+  "8": {
+    "rsi": -0.0067,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.0067,
+    "refusal_rate_tier2": 0.0,
+    "p_value": 1.0,
+    "significant": false,
+    "test": "chi2"
+  },
+  "9": {
+    "rsi": 0.1111,
+    "n_tier1": 180,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.4389,
+    "refusal_rate_tier2": 0.55,
+    "p_value": 0.271258,
+    "significant": false,
+    "test": "chi2"
+  },
+  "10": {
+    "rsi": 0.1083,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.2667,
+    "refusal_rate_tier2": 0.375,
+    "p_value": 0.251728,
+    "significant": false,
+    "test": "chi2"
+  },
+  "11": {
+    "rsi": -0.0067,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.0067,
+    "refusal_rate_tier2": 0.0,
+    "p_value": 1.0,
+    "significant": false,
+    "test": "chi2"
+  },
+  "12": {
+    "rsi": 0.0267,
+    "n_tier1": 150,
+    "n_tier2": 40,
+    "refusal_rate_tier1": 0.2733,
+    "refusal_rate_tier2": 0.3,
+    "p_value": 0.892025,
+    "significant": false,
+    "test": "chi2"
+  }
 }

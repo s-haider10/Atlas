@@ -4,8 +4,8 @@ Generate Tier 2 scenarios by applying operators to benchmark pairs.
 This is the main composition pipeline.
 
 4 benchmarks x 5 operators = up to 12 meaningful pairwise combinations.
-Each pair generates 10 composed scenarios via GPT-4o.
-Target: ~120 Tier 2 scenarios.
+Each pair generates 35 composed scenarios via GPT-4o.
+Target: ~420 Tier 2 scenarios (n=35 per pair for statistical power).
 
 Operator roles:
   IC  - Instruction Conflict: merge benign + adversarial instructions
@@ -19,44 +19,45 @@ from tqdm import tqdm
 from typing import Dict, List
 from schemas.atom import Atom
 from composition.operators import OPERATORS
+from tools.tool_registry import generate_mock_responses
 
 # Pairwise composition matrix for 4 benchmarks
 # Each pair has a natural operator based on the benchmarks' composition roles
 TIER2_PAIRS = [
     # IC: Instruction Conflict
-    {"id": 1,  "bench_a": "AgentHarm",     "bench_b": "MoralStories",  "operator": "IC",  "n": 10,
+    {"id": 1,  "bench_a": "AgentHarm",     "bench_b": "MoralStories",  "operator": "IC",  "n": 35,
      "desc": "Harmful request embedded alongside moral reasoning task"},
-    {"id": 2,  "bench_a": "AgentHarm",     "bench_b": "DarkBench",     "operator": "IC",  "n": 10,
+    {"id": 2,  "bench_a": "AgentHarm",     "bench_b": "DarkBench",     "operator": "IC",  "n": 35,
      "desc": "Harmful instruction mixed with manipulative framing"},
 
     # TRC: Tool Response Contamination
-    {"id": 3,  "bench_a": "AgentHarm",     "bench_b": "InjecAgent",    "operator": "TRC", "n": 10,
+    {"id": 3,  "bench_a": "AgentHarm",     "bench_b": "InjecAgent",    "operator": "TRC", "n": 35,
      "desc": "Injection payload in tool responses during harmful task context"},
-    {"id": 4,  "bench_a": "InjecAgent",    "bench_b": "DarkBench",     "operator": "TRC", "n": 10,
+    {"id": 4,  "bench_a": "InjecAgent",    "bench_b": "DarkBench",     "operator": "TRC", "n": 35,
      "desc": "Dark pattern injections in tool responses"},
 
     # NO: Norm Overlay
-    {"id": 5,  "bench_a": "AgentHarm",     "bench_b": "MoralStories",  "operator": "NO",  "n": 10,
+    {"id": 5,  "bench_a": "AgentHarm",     "bench_b": "MoralStories",  "operator": "NO",  "n": 35,
      "desc": "Ethical constraint on harmful task — does norm help refusal?"},
-    {"id": 6,  "bench_a": "InjecAgent",    "bench_b": "MoralStories",  "operator": "NO",  "n": 10,
+    {"id": 6,  "bench_a": "InjecAgent",    "bench_b": "MoralStories",  "operator": "NO",  "n": 35,
      "desc": "Norm awareness during injection resistance — protective effect?"},
 
     # SE: Sycophancy Escalation
-    {"id": 7,  "bench_a": "AgentHarm",     "bench_b": "DarkBench",     "operator": "SE",  "n": 10,
+    {"id": 7,  "bench_a": "AgentHarm",     "bench_b": "DarkBench",     "operator": "SE",  "n": 35,
      "desc": "Social pressure compromises harmful task refusal"},
-    {"id": 8,  "bench_a": "MoralStories",  "bench_b": "DarkBench",     "operator": "SE",  "n": 10,
+    {"id": 8,  "bench_a": "MoralStories",  "bench_b": "DarkBench",     "operator": "SE",  "n": 35,
      "desc": "Manipulative pressure on moral reasoning"},
 
     # MDI: Moral Dilemma Injection
-    {"id": 9,  "bench_a": "MoralStories",  "bench_b": "AgentHarm",     "operator": "MDI", "n": 10,
+    {"id": 9,  "bench_a": "MoralStories",  "bench_b": "AgentHarm",     "operator": "MDI", "n": 35,
      "desc": "Ethical dilemma embedded in harmful task context"},
-    {"id": 10, "bench_a": "MoralStories",  "bench_b": "InjecAgent",    "operator": "MDI", "n": 10,
+    {"id": 10, "bench_a": "MoralStories",  "bench_b": "InjecAgent",    "operator": "MDI", "n": 35,
      "desc": "Moral dilemma distracts from injection detection"},
 
     # Cross-cutting
-    {"id": 11, "bench_a": "DarkBench",     "bench_b": "MoralStories",  "operator": "NO",  "n": 10,
+    {"id": 11, "bench_a": "DarkBench",     "bench_b": "MoralStories",  "operator": "NO",  "n": 35,
      "desc": "Norm overlay on dark pattern scenarios"},
-    {"id": 12, "bench_a": "DarkBench",     "bench_b": "InjecAgent",    "operator": "IC",  "n": 10,
+    {"id": 12, "bench_a": "DarkBench",     "bench_b": "InjecAgent",    "operator": "IC",  "n": 35,
      "desc": "Manipulation + injection combined instruction"},
 ]
 
@@ -71,7 +72,9 @@ def select_atom_pair(atoms_a: List[Atom], atoms_b: List[Atom],
         if pair_key not in used_pairs:
             used_pairs.add(pair_key)
             return a, b
-    return random.choice(atoms_a), random.choice(atoms_b)
+    a, b = random.choice(atoms_a), random.choice(atoms_b)
+    used_pairs.add(f"{a.id}_{b.id}_{operator}")
+    return a, b
 
 
 def build_tier2(all_atoms: Dict[str, List[Atom]], seed: int = 42) -> List[dict]:
@@ -104,6 +107,18 @@ def build_tier2(all_atoms: Dict[str, List[Atom]], seed: int = 42) -> List[dict]:
             try:
                 composed = compose_fn(atom_a, atom_b)
 
+                # Normalize tools: ensure every tool is a full dict with mock_response
+                raw_tools = composed.get("tools", composed.get("tools_needed", []))
+                scenario_context = {
+                    "user_prompt": composed.get("composed_user_prompt", ""),
+                    "safe_behavior": composed.get("safe_behavior", ""),
+                    "unsafe_behavior": composed.get("unsafe_behavior", ""),
+                    "operator": operator,
+                }
+                # TRC tools already have injected_response from the template;
+                # non-TRC tools get contextual mock_response via LLM or heuristic
+                enriched_tools = generate_mock_responses(raw_tools, scenario_context)
+
                 tier2.append({
                     "id": f"atlas-t2-p{pair_id:02d}-{i:02d}",
                     "tier": 2,
@@ -113,11 +128,15 @@ def build_tier2(all_atoms: Dict[str, List[Atom]], seed: int = 42) -> List[dict]:
                     "source_b": {"benchmark": bench_b, "atom_id": atom_b.id},
                     "user_prompt": composed.get("composed_user_prompt", ""),
                     "system_prompt": composed.get("composed_system_prompt"),
-                    "tools": composed.get("tools", composed.get("tools_needed", [])),
+                    "tools": enriched_tools,
                     "safety_dimensions": [
                         composed.get("dimension_a_name", atom_a.primary_dimension),
                         composed.get("dimension_b_name", atom_b.primary_dimension),
                     ],
+                    "dimension_benchmark_map": {
+                        composed.get("dimension_a_name", atom_a.primary_dimension): bench_a,
+                        composed.get("dimension_b_name", atom_b.primary_dimension): bench_b,
+                    },
                     "dimension_a_eval": composed.get("dimension_a_eval", ""),
                     "dimension_b_eval": composed.get("dimension_b_eval", ""),
                     "safe_behavior": composed.get("safe_behavior", ""),

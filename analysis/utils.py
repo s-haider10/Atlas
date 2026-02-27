@@ -33,13 +33,18 @@ def load_eval_results(log_dir: str = "logs") -> List[dict]:
                 continue
             for sample in log.samples:
                 score_data = {}
-                overall = 0
+                overall = None
                 if sample.scores:
                     for scorer_name, score_obj in sample.scores.items():
                         if hasattr(score_obj, 'metadata') and score_obj.metadata:
                             score_data = score_obj.metadata.get("per_dimension_scores", {})
                         if hasattr(score_obj, 'value'):
-                            overall = score_obj.value if isinstance(score_obj.value, (int, float)) else 0
+                            overall = score_obj.value if isinstance(score_obj.value, (int, float)) else None
+
+                # Extract agent output for text-based analysis (e.g., refusal detection)
+                agent_output = ""
+                if sample.output and hasattr(sample.output, "completion"):
+                    agent_output = sample.output.completion or ""
 
                 metadata = sample.metadata or {}
                 results.append({
@@ -51,7 +56,9 @@ def load_eval_results(log_dir: str = "logs") -> List[dict]:
                     "safety_dimensions": metadata.get("safety_dimensions", []),
                     "per_dimension_scores": score_data,
                     "overall_score": overall,
+                    "agent_output": agent_output,
                     "composition_sources": metadata.get("composition_sources", []),
+                    "dimension_benchmark_map": metadata.get("dimension_benchmark_map", {}),
                     # Tier 3 specific
                     "triple_config_id": metadata.get("triple_config_id"),
                     "base_tier2_pair_id": metadata.get("base_tier2_pair_id"),
@@ -92,8 +99,13 @@ def get_tier1_baselines(results: List[dict]) -> Dict[str, Dict[str, float]]:
     for r in tier1:
         benchmark = r["source_benchmark"]
         for dim, score_info in r.get("per_dimension_scores", {}).items():
-            score_val = score_info.get("score", 0) if isinstance(score_info, dict) else score_info
-            baselines[benchmark][dim].append(score_val)
+            if isinstance(score_info, dict):
+                score_val = score_info.get("score")
+            else:
+                score_val = score_info
+            # Only include valid scores — never default missing to 0
+            if score_val is not None:
+                baselines[benchmark][dim].append(score_val)
 
     # Average
     result = {}
@@ -114,9 +126,15 @@ def get_tier2_scores_by_pair(results: List[dict]) -> Dict[int, List[dict]]:
 
 
 def get_dimension_score(result: dict, dimension: str) -> Optional[float]:
-    """Extract score for a specific dimension from a result."""
+    """Extract score for a specific dimension from a result.
+
+    Returns None if dimension not found or score is None (never defaults to 0).
+    """
     scores = result.get("per_dimension_scores", {})
     if dimension in scores:
         s = scores[dimension]
-        return s.get("score", 0) if isinstance(s, dict) else s
+        if isinstance(s, dict):
+            val = s.get("score")
+            return val if val is not None else None
+        return s
     return None

@@ -1,50 +1,464 @@
 {
-  "dark_pattern": {
-    "dark_pattern": 0.0,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": -0.5,
-    "injection_resistance": -0.3833,
-    "norm_compliance": 0.7833
+  "matrix": {
+    "dark_pattern": {
+      "dark_pattern": "not_measurable",
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": -0.515,
+      "injection_resistance": -0.5017,
+      "norm_compliance": 0.7733
+    },
+    "dark_pattern_resistance": {
+      "dark_pattern": null,
+      "dark_pattern_resistance": "not_measurable",
+      "ethical_reasoning": null,
+      "harmful_refusal": 0.235,
+      "injection_resistance": null,
+      "norm_compliance": -0.3267
+    },
+    "ethical_reasoning": {
+      "dark_pattern": null,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": "not_measurable",
+      "harmful_refusal": 0.035,
+      "injection_resistance": -0.1767,
+      "norm_compliance": null
+    },
+    "harmful_refusal": {
+      "dark_pattern": -1.4294,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": "not_measurable",
+      "injection_resistance": -0.3267,
+      "norm_compliance": 0.4358
+    },
+    "injection_resistance": {
+      "dark_pattern": -1.0544,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": -0.24,
+      "injection_resistance": "not_measurable",
+      "norm_compliance": 0.3233
+    },
+    "norm_compliance": {
+      "dark_pattern": -0.0294,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": -0.4525,
+      "injection_resistance": 0.0483,
+      "norm_compliance": "not_measurable"
+    }
   },
-  "dark_pattern_resistance": {
-    "dark_pattern": 0.0,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": 0.2667,
-    "injection_resistance": 0.0,
-    "norm_compliance": -0.4167
+  "counts": {
+    "dark_pattern": {
+      "dark_pattern": 0,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 40,
+      "injection_resistance": 80,
+      "norm_compliance": 40
+    },
+    "dark_pattern_resistance": {
+      "dark_pattern": 0,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 40,
+      "injection_resistance": 0,
+      "norm_compliance": 40
+    },
+    "ethical_reasoning": {
+      "dark_pattern": 0,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 40,
+      "injection_resistance": 40,
+      "norm_compliance": 0
+    },
+    "harmful_refusal": {
+      "dark_pattern": 40,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 0,
+      "injection_resistance": 40,
+      "norm_compliance": 80
+    },
+    "injection_resistance": {
+      "dark_pattern": 80,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 40,
+      "injection_resistance": 0,
+      "norm_compliance": 40
+    },
+    "norm_compliance": {
+      "dark_pattern": 40,
+      "dark_pattern_resistance": 0,
+      "ethical_reasoning": 0,
+      "harmful_refusal": 80,
+      "injection_resistance": 40,
+      "norm_compliance": 0
+    }
   },
-  "ethical_reasoning": {
-    "dark_pattern": 0.0,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": 0.2,
-    "injection_resistance": 0.0667,
-    "norm_compliance": 0.0
+  "pvalues": {
+    "dark_pattern": {
+      "dark_pattern": null,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": 4.8e-05,
+      "injection_resistance": 1.7e-05,
+      "norm_compliance": 0.0
+    },
+    "dark_pattern_resistance": {
+      "dark_pattern": null,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": 0.029065,
+      "injection_resistance": null,
+      "norm_compliance": 3.4e-05
+    },
+    "ethical_reasoning": {
+      "dark_pattern": null,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": 0.81377,
+      "injection_resistance": 0.283091,
+      "norm_compliance": null
+    },
+    "harmful_refusal": {
+      "dark_pattern": 0.0,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": null,
+      "injection_resistance": 0.006832,
+      "norm_compliance": 0.000177
+    },
+    "injection_resistance": {
+      "dark_pattern": 0.0,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": 0.030827,
+      "injection_resistance": null,
+      "norm_compliance": 0.038377
+    },
+    "norm_compliance": {
+      "dark_pattern": 0.796417,
+      "dark_pattern_resistance": null,
+      "ethical_reasoning": null,
+      "harmful_refusal": 0.0,
+      "injection_resistance": 0.258786,
+      "norm_compliance": null
+    }
   },
-  "harmful_refusal": {
-    "dark_pattern": -1.1994,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": 0.0,
-    "injection_resistance": -0.2333,
-    "norm_compliance": 0.4667
-  },
-  "injection_resistance": {
-    "dark_pattern": -0.916,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": -0.2333,
-    "injection_resistance": 0.0,
-    "norm_compliance": 0.45
-  },
-  "norm_compliance": {
-    "dark_pattern": 0.0673,
-    "dark_pattern_resistance": 0.0,
-    "ethical_reasoning": 0.0,
-    "harmful_refusal": -0.45,
-    "injection_resistance": 0.0333,
-    "norm_compliance": 0.0
+  "stats": {
+    "dark_pattern": {
+      "dark_pattern": {
+        "reason": "diagonal_not_measurable"
+      },
+      "dark_pattern_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "ethical_reasoning": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "harmful_refusal": {
+        "n": 40,
+        "mean": -0.515,
+        "std": 0.7121,
+        "se": 0.1126,
+        "ci_95": [
+          -0.7427,
+          -0.2873
+        ],
+        "t_stat": -4.5742,
+        "p_value": 4.8e-05,
+        "cohens_d": -0.7232,
+        "significant": true
+      },
+      "injection_resistance": {
+        "n": 80,
+        "mean": -0.5017,
+        "std": 0.9805,
+        "se": 0.1096,
+        "ci_95": [
+          -0.7199,
+          -0.2835
+        ],
+        "t_stat": -4.5763,
+        "p_value": 1.7e-05,
+        "cohens_d": -0.5116,
+        "significant": true
+      },
+      "norm_compliance": {
+        "n": 40,
+        "mean": 0.7733,
+        "std": 0.5639,
+        "se": 0.0892,
+        "ci_95": [
+          0.593,
+          0.9537
+        ],
+        "t_stat": 8.674,
+        "p_value": 0.0,
+        "cohens_d": 1.3715,
+        "significant": true
+      }
+    },
+    "dark_pattern_resistance": {
+      "dark_pattern": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "dark_pattern_resistance": {
+        "reason": "diagonal_not_measurable"
+      },
+      "ethical_reasoning": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "harmful_refusal": {
+        "n": 40,
+        "mean": 0.235,
+        "std": 0.6558,
+        "se": 0.1037,
+        "ci_95": [
+          0.0253,
+          0.4447
+        ],
+        "t_stat": 2.2662,
+        "p_value": 0.029065,
+        "cohens_d": 0.3583,
+        "significant": true
+      },
+      "injection_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "norm_compliance": {
+        "n": 40,
+        "mean": -0.3267,
+        "std": 0.4414,
+        "se": 0.0698,
+        "ci_95": [
+          -0.4678,
+          -0.1855
+        ],
+        "t_stat": -4.6802,
+        "p_value": 3.4e-05,
+        "cohens_d": -0.74,
+        "significant": true
+      }
+    },
+    "ethical_reasoning": {
+      "dark_pattern": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "dark_pattern_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "ethical_reasoning": {
+        "reason": "diagonal_not_measurable"
+      },
+      "harmful_refusal": {
+        "n": 40,
+        "mean": 0.035,
+        "std": 0.9334,
+        "se": 0.1476,
+        "ci_95": [
+          -0.2635,
+          0.3335
+        ],
+        "t_stat": 0.2372,
+        "p_value": 0.81377,
+        "cohens_d": 0.0375,
+        "significant": false
+      },
+      "injection_resistance": {
+        "n": 40,
+        "mean": -0.1767,
+        "std": 1.0266,
+        "se": 0.1623,
+        "ci_95": [
+          -0.505,
+          0.1516
+        ],
+        "t_stat": -1.0884,
+        "p_value": 0.283091,
+        "cohens_d": -0.1721,
+        "significant": false
+      },
+      "norm_compliance": {
+        "reason": "no_data",
+        "n": 0
+      }
+    },
+    "harmful_refusal": {
+      "dark_pattern": {
+        "n": 40,
+        "mean": -1.4294,
+        "std": 1.194,
+        "se": 0.1888,
+        "ci_95": [
+          -1.8113,
+          -1.0476
+        ],
+        "t_stat": -7.5715,
+        "p_value": 0.0,
+        "cohens_d": -1.1972,
+        "significant": true
+      },
+      "dark_pattern_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "ethical_reasoning": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "harmful_refusal": {
+        "reason": "diagonal_not_measurable"
+      },
+      "injection_resistance": {
+        "n": 40,
+        "mean": -0.3267,
+        "std": 0.7232,
+        "se": 0.1144,
+        "ci_95": [
+          -0.558,
+          -0.0954
+        ],
+        "t_stat": -2.8566,
+        "p_value": 0.006832,
+        "cohens_d": -0.4517,
+        "significant": true
+      },
+      "norm_compliance": {
+        "n": 80,
+        "mean": 0.4358,
+        "std": 0.9904,
+        "se": 0.1107,
+        "ci_95": [
+          0.2154,
+          0.6562
+        ],
+        "t_stat": 3.9361,
+        "p_value": 0.000177,
+        "cohens_d": 0.4401,
+        "significant": true
+      }
+    },
+    "injection_resistance": {
+      "dark_pattern": {
+        "n": 80,
+        "mean": -1.0544,
+        "std": 1.006,
+        "se": 0.1125,
+        "ci_95": [
+          -1.2783,
+          -0.8305
+        ],
+        "t_stat": -9.3747,
+        "p_value": 0.0,
+        "cohens_d": -1.0481,
+        "significant": true
+      },
+      "dark_pattern_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "ethical_reasoning": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "harmful_refusal": {
+        "n": 40,
+        "mean": -0.24,
+        "std": 0.6775,
+        "se": 0.1071,
+        "ci_95": [
+          -0.4567,
+          -0.0233
+        ],
+        "t_stat": -2.2405,
+        "p_value": 0.030827,
+        "cohens_d": -0.3543,
+        "significant": true
+      },
+      "injection_resistance": {
+        "reason": "diagonal_not_measurable"
+      },
+      "norm_compliance": {
+        "n": 40,
+        "mean": 0.3233,
+        "std": 0.9541,
+        "se": 0.1509,
+        "ci_95": [
+          0.0182,
+          0.6285
+        ],
+        "t_stat": 2.1434,
+        "p_value": 0.038377,
+        "cohens_d": 0.3389,
+        "significant": true
+      }
+    },
+    "norm_compliance": {
+      "dark_pattern": {
+        "n": 40,
+        "mean": -0.0294,
+        "std": 0.7161,
+        "se": 0.1132,
+        "ci_95": [
+          -0.2584,
+          0.1996
+        ],
+        "t_stat": -0.2598,
+        "p_value": 0.796417,
+        "cohens_d": -0.0411,
+        "significant": false
+      },
+      "dark_pattern_resistance": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "ethical_reasoning": {
+        "reason": "no_data",
+        "n": 0
+      },
+      "harmful_refusal": {
+        "n": 80,
+        "mean": -0.4525,
+        "std": 0.698,
+        "se": 0.078,
+        "ci_95": [
+          -0.6078,
+          -0.2972
+        ],
+        "t_stat": -5.7985,
+        "p_value": 0.0,
+        "cohens_d": -0.6483,
+        "significant": true
+      },
+      "injection_resistance": {
+        "n": 40,
+        "mean": 0.0483,
+        "std": 0.2667,
+        "se": 0.0422,
+        "ci_95": [
+          -0.037,
+          0.1336
+        ],
+        "t_stat": 1.146,
+        "p_value": 0.258786,
+        "cohens_d": 0.1812,
+        "significant": false
+      },
+      "norm_compliance": {
+        "reason": "diagonal_not_measurable"
+      }
+    }
   }
 }

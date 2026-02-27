@@ -28,6 +28,27 @@ def scenario_to_sample(scenario: dict) -> Sample:
         messages.append({"role": "system", "content": scenario["system_prompt"]})
     messages.append({"role": "user", "content": scenario["user_prompt"]})
     
+    # Tools are full dicts (with name/description/mock_response or injected_response)
+    # generated at composition time. Pass them through verbatim.
+    tools = scenario.get("tools", [])
+
+    # Build tool audit manifest: what tools are available and what they return.
+    # This is included in metadata so LLM judge and deterministic checker can
+    # audit tool interactions without needing to re-run the tools.
+    tool_audit = []
+    for t in tools:
+        if isinstance(t, dict):
+            entry = {"name": t.get("name", "unknown"), "description": t.get("description", "")}
+            if t.get("injected_response"):
+                entry["response_type"] = "injected"
+                entry["response"] = t["injected_response"]
+            elif t.get("mock_response"):
+                entry["response_type"] = "mock"
+                entry["response"] = t["mock_response"]
+            tool_audit.append(entry)
+        elif isinstance(t, str):
+            tool_audit.append({"name": t, "response_type": "heuristic"})
+
     return Sample(
         id=scenario["id"],
         input=messages if len(messages) > 1 else scenario["user_prompt"],
@@ -35,6 +56,7 @@ def scenario_to_sample(scenario: dict) -> Sample:
         metadata={
             "tier": scenario["tier"],
             "safety_dimensions": scenario.get("safety_dimensions", []),
+            "dimension_benchmark_map": scenario.get("dimension_benchmark_map", {}),
             "composition_method": scenario.get("composition_method", "none"),
             "composition_sources": scenario.get("composition_sources", []),
             "operator": scenario.get("operator", "none"),
@@ -44,7 +66,8 @@ def scenario_to_sample(scenario: dict) -> Sample:
             "dimension_b_eval": scenario.get("dimension_b_eval", ""),
             "dimension_c_eval": scenario.get("dimension_c_eval", ""),
             "pair_id": scenario.get("pair_id"),
-            "tools": scenario.get("tools", scenario.get("tools_needed", [])),
+            "tools": tools,
+            "tool_audit": tool_audit,
             # Tier 3 specific
             "triple_config_id": scenario.get("triple_config_id"),
             "base_tier2_id": scenario.get("base_tier2_id"),

@@ -2,22 +2,28 @@
 """
 Composition Nonlinearity Index (CNI).
 
-CNI = Score(Tier3_ABC) - avg(Score(Tier2_AB), Score(Tier2_BC), Score(Tier2_AC))
+CNI = Score(Tier3_triple) - Score(Tier2_base_pair)
 
-CNI < 0: safety degrades MORE than predicted by pairwise interactions (compounding)
-CNI ~ 0: pairwise effects are sufficient to predict triple behavior (additive)
-CNI > 0: triple composition is LESS bad than predicted (protective interaction)
+Measures whether adding a third safety dimension to a Tier 2 pair causes
+nonlinear degradation beyond what the pairwise composition already showed.
+
+CNI < 0: triple composition is WORSE than pairwise (compounding effect)
+CNI ~ 0: third dimension adds no extra degradation (additive)
+CNI > 0: triple composition is LESS bad than pairwise (protective interaction)
+
+Statistical test: one-sample t-test, H0: CNI = 0.
 """
 import json, os
 from collections import defaultdict
 from analysis.utils import load_eval_results, get_tier2_scores_by_pair
+from analysis.stats_utils import compute_stats, one_sample_ttest
 
 
 def compute_all_cni(log_dir: str = "logs") -> dict:
-    """Compute CNI for all Tier 3 scenarios.
+    """Compute CNI for all Tier 3 configurations.
 
     Returns:
-        {triple_config_id: {dimension: cni_value}}
+        {config_id: {cni, n, p_value, ci_95, cohens_d, significant, base_pair_id}}
     """
     results = load_eval_results(log_dir)
     if not results:
@@ -31,34 +37,31 @@ def compute_all_cni(log_dir: str = "logs") -> dict:
         print("Warning: No Tier 3 results found.")
         return {}
 
-    # Group Tier 3 by triple_config_id (from metadata)
+    # Compute Tier 2 means per pair
+    t2_means = {}
+    for pair_id, pair_results in tier2_by_pair.items():
+        scores = [r["overall_score"] for r in pair_results
+                  if r.get("overall_score") is not None]
+        t2_means[pair_id] = sum(scores) / len(scores) if scores else None
+
+    # Group Tier 3 by triple_config_id — require explicit metadata
     t3_by_config = defaultdict(list)
+    dropped = 0
     for r in tier3:
         config_id = r.get("triple_config_id")
         if config_id is not None:
             t3_by_config[config_id].append(r)
         else:
-            # Fallback: extract config id from scenario id (e.g. "atlas-t3-01-00" -> 1)
-            sid = r.get("id", "")
-            parts = sid.split("-")
-            if len(parts) >= 3 and parts[1] == "t3":
-                try:
-                    config_id = int(parts[2])
-                    t3_by_config[config_id].append(r)
-                except ValueError:
-                    pass
+            dropped += 1
+            print(f"  Warning: Tier 3 result '{r.get('id', '?')}' missing triple_config_id — dropped")
+    if dropped:
+        print(f"  {dropped} Tier 3 results dropped (missing triple_config_id in metadata)")
 
     if not t3_by_config:
         print("Warning: Could not group Tier 3 results by config.")
         return {}
 
-    # Compute Tier 2 averages per pair
-    t2_means = {}
-    for pair_id, pair_results in tier2_by_pair.items():
-        scores = [r["overall_score"] for r in pair_results if r.get("overall_score") is not None]
-        t2_means[pair_id] = sum(scores) / len(scores) if scores else 0
-
-    # Load Tier 3 configs to map config_id -> base tier2 pair_id
+    # Load Tier 3 configs for pair_id mapping
     t3_config_map = {}
     t3_config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                    "scenarios/tier3/tier3_scenarios.json")
@@ -73,37 +76,63 @@ def compute_all_cni(log_dir: str = "logs") -> dict:
     cni_results = {}
 
     for config_id, t3_results in t3_by_config.items():
-        t3_scores = [r["overall_score"] for r in t3_results if r.get("overall_score") is not None]
+        t3_scores = [r["overall_score"] for r in t3_results
+                     if r.get("overall_score") is not None]
+
         if not t3_scores:
+            print(f"  Warning: Config {config_id} has no valid Tier 3 scores — skipped")
+            cni_results[config_id] = {
+                "cni": None, "n": 0, "reason": "no_tier3_scores",
+            }
             continue
 
-        t3_mean = sum(t3_scores) / len(t3_scores)
-
-        # Get the base Tier 2 pair_id: from metadata, or from config map
+        # Get the base Tier 2 pair_id — NO global fallback
         base_pair_id = t3_results[0].get("base_tier2_pair_id")
         if base_pair_id is None:
             base_pair_id = t3_config_map.get(config_id)
 
-        if base_pair_id is not None and base_pair_id in t2_means:
-            t2_baseline = t2_means[base_pair_id]
-        else:
-            # Fall back to overall Tier 2 average
-            all_t2_scores = [r["overall_score"] for rs in tier2_by_pair.values()
-                            for r in rs if r.get("overall_score") is not None]
-            t2_baseline = sum(all_t2_scores) / len(all_t2_scores) if all_t2_scores else 0
+        if base_pair_id is None or base_pair_id not in t2_means or t2_means[base_pair_id] is None:
+            print(f"  Warning: Config {config_id} has no matching Tier 2 baseline — skipped")
+            cni_results[config_id] = {
+                "cni": None, "n": len(t3_scores),
+                "reason": "no_tier2_baseline",
+                "base_pair_id": base_pair_id,
+            }
+            continue
 
-        cni_results[config_id] = round(t3_mean - t2_baseline, 4)
+        t2_baseline = t2_means[base_pair_id]
+
+        # Compute per-sample CNI: each Tier 3 score minus Tier 2 baseline
+        cni_values = [s - t2_baseline for s in t3_scores]
+        stats_result = compute_stats(cni_values)
+        ttest = one_sample_ttest(cni_values, popmean=0)
+
+        cni_results[config_id] = {
+            "cni": stats_result["mean"],
+            "n": stats_result["n"],
+            "std": stats_result["std"],
+            "ci_95": stats_result["ci_95"],
+            "t_stat": ttest["t_stat"],
+            "p_value": ttest["p_value"],
+            "cohens_d": ttest["cohens_d"],
+            "significant": ttest["significant"],
+            "base_pair_id": base_pair_id,
+            "t2_baseline": round(t2_baseline, 4),
+        }
 
     # Save
     os.makedirs("analysis", exist_ok=True)
     with open("analysis/cni_results.json", "w") as f:
         json.dump(cni_results, f, indent=2)
 
-    print(f"Computed CNI for {len(cni_results)} triple configs")
-    if cni_results:
-        vals = list(cni_results.values())
+    valid = [v for v in cni_results.values() if v.get("cni") is not None]
+    null_count = sum(1 for v in cni_results.values() if v.get("cni") is None)
+
+    print(f"Computed CNI for {len(cni_results)} triple configs ({len(valid)} valid, {null_count} insufficient data)")
+    if valid:
+        vals = [v["cni"] for v in valid]
         print(f"  Mean CNI: {sum(vals)/len(vals):.4f}")
-        sig = sum(1 for v in vals if abs(v) > 0.1)
-        print(f"  Significant (|CNI| > 0.1): {sig}/{len(vals)}")
+        sig = sum(1 for v in valid if v.get("significant"))
+        print(f"  Significant (p<0.05): {sig}/{len(valid)}")
 
     return cni_results
